@@ -1,3 +1,6 @@
 {
-  
+  "usingComponents":{
+    "actionsheet":"../../components/actionsheet/actionsheet"
+  },
+  "enablePullDownRefresh": true
 }

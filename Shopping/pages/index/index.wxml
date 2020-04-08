@@ -1,8 +1,20 @@
 <view class="container">
-  <view wx:for="{{list}}">
-      <view class="list-item item">this is{{item}}</view>
+
+  <view wx:for="{{list}}" wx:key="createDate">
+    <view id="{{index}}" class="list-item item" bindtap="itemSelected">
+      {{item.url}}
+      
+      {{item.nPrice}}￥
+    </view>
   </view>
-  <view class="add-item item"></view>
- 
+  <!-- <actionsheet title="{{theGood}}" show="{{showActionSheet}}" actions="{{groups}}"></actionsheet> -->
+
+  <button class="add-item item" bindtap="addTap"></button>
+  <modal hidden="{{hiddenmodalput}}" title="添加商品" confirm-text="添加" cancel-text="取消" bindcancel="cancel" bindconfirm="confirm">
+
+    <input class="in" type='text' placeholder="请输入商品链接" bindinput="addItem" value="{{inputValue}}" auto-focus/>
+
+  </modal>
+  <!-- <button bindtap="test">调试按钮</button> -->
 
 </view>

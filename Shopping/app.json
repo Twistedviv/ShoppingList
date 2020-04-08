@@ -4,7 +4,7 @@
     "pages/setting/setting"
   ],
   "window": {
-    "navigationBarBackgroundColor": "#ffffff",
+    "navigationBarBackgroundColor": "#1296db",
     "navigationBarTextStyle": "black",
     "navigationBarTitleText": "小程序",
     "backgroundColor": "#eeeeee",
@@ -14,7 +14,7 @@
   "tabBar":{
     "color": "#000000",
     "selectedColor":"#1296db",
-    "backgroundColor":"#eeeeee",
+    "backgroundColor":"#ffffff",
     "list":[
       {
         "pagePath": "pages/index/index",
