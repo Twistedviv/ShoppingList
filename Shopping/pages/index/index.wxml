@@ -1,20 +1,37 @@
 <view class="container">
 
-  <view wx:for="{{list}}" wx:key="createDate">
-    <view id="{{index}}" class="list-item item" bindtap="itemSelected">
-      {{item.url}}
-      
-      {{item.nPrice}}￥
-    </view>
-  </view>
-  <!-- <actionsheet title="{{theGood}}" show="{{showActionSheet}}" actions="{{groups}}"></actionsheet> -->
+	<view wx:for="{{list}}" wx:key="createDate">
+		<view class="item-container">
+			<view id="{{index}}" class="list-item item" bindtap="itemSelected">
+      <view class="name-container">
+      	<view class="item-name-background">
+					<view class="item-name">{{item.itemName}}</view>
+				</view>
+      </view>
+			<view class="price-container">
+      <view class="item-price-background">
+				<view class="item-price">
+				{{item.nPrice}}￥</view>
+				</view>
+      </view>
+        
+			</view>
+		</view>
+	</view>
+	<!-- <actionsheet title="{{theGood}}" show="{{showActionSheet}}" actions="{{groups}}"></actionsheet> -->
 
-  <button class="add-item item" bindtap="addTap"></button>
-  <modal hidden="{{hiddenmodalput}}" title="添加商品" confirm-text="添加" cancel-text="取消" bindcancel="cancel" bindconfirm="confirm">
+	<button class="add-item item" bindtap="addTap"></button>
+	
+	<!-- 添加item -->
+	<modal hidden="{{hiddenmodalput1}}" title="添加商品" confirm-text="添加" cancel-text="取消" bindcancel="cancel" bindconfirm="confirm">
+		<input class="in" type='text' placeholder="请输入商品链接" bindinput="addItem" value="{{inputValue}}" auto-focus />
+	</modal>
 
-    <input class="in" type='text' placeholder="请输入商品链接" bindinput="addItem" value="{{inputValue}}" auto-focus/>
+	<!-- 修改item -->
+	<modal hidden="{{hiddenmodalput2}}" title="修改商品名称" confirm-text="确认" cancel-text="取消" bindcancel="cancel2" bindconfirm="confirm2">
+		<input class="in" type='text' placeholder="{{updateItemPlaceholder}}" bindinput="updateItem" value="{{inputValue2}}" auto-focus />
+	</modal>
 
-  </modal>
-  <!-- <button bindtap="test">调试按钮</button> -->
+	<button bindtap="test">调试按钮</button>
 
 </view>

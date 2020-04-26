@@ -7,8 +7,12 @@ const app = getApp()
 Page({
   data: {
     list: [],
-    inputValue: "",
-    hiddenmodalput: true,
+    selectedUrl: "",
+    inputValue1: "",
+    inputValue2: "",
+    hiddenmodalput1: true,
+    hiddenmodalput2: true,
+    updateItemPlaceholder:""
   },
 
   //------------页面第一次加载时，渲染list------------------
@@ -45,7 +49,7 @@ Page({
     })
     //刷新后清空input
     that.setData({
-      inputValue: ""
+      inputValue1: ""
     })
     wx.stopPullDownRefresh()
   },
@@ -53,22 +57,70 @@ Page({
   //-----------------点击item跳出操作项---------------------
   itemSelected: function (e) {
     let that = this
+    this.setData({
+      selectedUrl:this.data.list[e.currentTarget.id].url
+    })
     wx.showActionSheet({
-      itemList: ["复制链接", "删除"],
+      itemList: ["修改名称", "删除"],
       success(res) {
         if (res.tapIndex == 0) {
-          //复制链接
+          //修改名称
+          that.updateItemName(e)
         } else {
-          //删除该项(找出对应list的第几项后，用list.item对应的url删除数据库中的数据)
-          commd.where({
-            url: that.data.list[e.currentTarget.id].url
-          }).remove({
-            success: function (res) {
-              console.log("删除成功！")
-              wx.startPullDownRefresh({});
-            }
-          })
+          that.removeItem(e)
         }
+      }
+    })
+  },
+  
+  updateItemName: function(e){
+    //显示修改框并设置placeholder
+    this.setData({
+      updateItemPlaceholder:this.data.list[e.currentTarget.id].itemName,
+      hiddenmodalput2: !this.data.hiddenmodalput2
+    })
+  },
+  //实时监听inputValue2
+  updateItem: function(e){
+    this.setData({
+      inputValue2:e.detail.value
+    })
+  },
+
+  confirm2: function(){
+    this.setData({
+      hiddenmodalput2: true
+    })
+    commd.where({
+      url: this.data.selectedUrl
+    }).update({
+      data:{
+        itemName: this.data.inputValue2
+      },
+      success: function(res){
+        console.log("更新成功:"+this.data.inputValue2)
+        wx.startPullDownRefresh({
+          complete: (res) => {console("改名刷新成功")},
+        })
+      }
+    })
+  },
+
+  cancel2: function(){
+    this.setData({
+      hiddenmodalput2: true
+    });
+  },
+
+
+  removeItem: function(e){
+    //删除该项(找出对应list的第几项后，用list.item对应的url删除数据库中的数据)
+    commd.where({
+      url: this.data.list[e.currentTarget.id].url
+    }).remove({
+      success: function (res) {
+        console.log("删除成功！")
+        wx.startPullDownRefresh({});
       }
     })
   },
@@ -76,38 +128,43 @@ Page({
   //-------------------点击加号添加--------------------------
   addTap: function () {
     this.setData({
-      hiddenmodalput: !this.data.hiddenmodalput
+      hiddenmodalput1: !this.data.hiddenmodalput1
     });
   },
-  //取消按钮  
-  cancel: function () {
-    this.setData({
-      hiddenmodalput: true
-    });
-  },
+
   //实时监听输入框中的地址，并修改页面变量inputValue
   addItem: function (e) {
     this.setData({
-      inputValue: e.detail.value
+      inputValue1: e.detail.value
     })
   },
+
+  //取消按钮  
+  cancel: function () {
+    this.setData({
+      hiddenmodalput1: true
+    });
+  },
+
   //确认  
   confirm: function (event) {
     let that = this
     this.setData({
-      hiddenmodalput: true
+      hiddenmodalput1: true
     })
     //异步操作爬虫获取价格，并存入数据库，成功后刷新页面
     wx.cloud.callFunction({
       name: "scrapyWeb",
       data: {
-        url: that.data.inputValue
+        url: that.data.inputValue1
       },
       success: function (res) {
+        console.log(res.result[0].length)
         commd.add({
           data: {
-            url: that.data.inputValue,
-            nPrice: res.result,
+            url: that.data.inputValue1,
+            itemName: res.result[0].length < 10 ? res.result[0] : res.result[0].substring(0, 9),
+            nPrice: res.result[1],
             createDate: db.serverDate()
           },
           success: function (res) {
@@ -120,20 +177,20 @@ Page({
   },
 
   test: function () {
-    let nowprice = wx.cloud.callFunction({
+    wx.cloud.callFunction({
       name: 'scrapyWeb',
-      data: {
-        url: "https://item.jd.com/100006320174.html"
+      data:{
+        url:"https://item.jd.com/10462486984.html"
       },
       success: function (res) {
-        console.log("scrapyWeb ok")
+        console.log(res.result)
       },
       fail: function (err) {
         console.log("scrapyWeb fail")
         console.log(err)
       }
     })
-    console.log("price is $" + nowprice)
+    
   }
 
 })
